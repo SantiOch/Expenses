@@ -19,8 +19,11 @@ struct SearchView: View {
       ScrollView {
         LazyVStack(spacing: 12) {
           FilterTransactionsView(category: nil, searchText: filterText, sortOrder: selectedSortOption) { transactions in
+           
             if !transactions.isEmpty {
+              
               CustomPickerView(selectedSortOption: $selectedSortOption)
+              
               ForEach(transactions) { transaction in
                 NavigationLink {
                   TransactionView(editTransaction: transaction)
@@ -34,28 +37,24 @@ struct SearchView: View {
               ContentUnavailableView.search(text: filterText)
                 .offset(y: 100)
             }
-            
           }
         }
         .padding()
       }
       .onChange(of: searchText) { oldValue, newValue in
         
-        if newValue.isEmpty {
-          filterText = ""
-        }
+        if newValue.isEmpty { filterText = "" }
         
         searchPubliser.send(newValue)
       }
-      .onReceive(searchPubliser.debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)) { text in
-        filterText = text
-      }
+      .onReceive(searchPubliser.debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)) { filterText = $0 }
       .searchable(text: $searchText)
       .navigationTitle("Search")
     }
     .overlay {
-      ContentUnavailableView("Search Transactions", systemImage: "magnifyingglass")
-        .opacity(filterText.isEmpty ? 1 : 0)
+      if filterText.isEmpty {
+        ContentUnavailableView("Search Transactions", systemImage: "magnifyingglass")
+      }
     }
     .animation(.snappy, value: selectedSortOption)
   }

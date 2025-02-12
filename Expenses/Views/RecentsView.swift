@@ -16,18 +16,9 @@ struct RecentsView: View {
   
   @State private var startDate: Date = .now.startOfMonth
   @State private var endDate: Date = .now.endOfMonth
-  
   @State private var selectedCategory: Category? = nil
   @State private var showDateSheet: Bool = false
   @State private var selectedSortOption: TransactionSortOption = .date
-  
-  
-  //  var filteredTransactions: [Transaction] {
-  //    transactions
-  //      .filter { $0.dateAdded >= startDate && $0.dateAdded <= endDate }
-  //      .filter { $0.category == selectedCategory?.rawValue || selectedCategory == nil }
-  //      .sorted(by: selectedSortOption)
-  //  }
   
   var body: some View {
     GeometryReader { geometry in
@@ -110,10 +101,7 @@ struct RecentsView: View {
             .foregroundStyle(.gray)
         }
       }
-      .visualEffect { content, proxy in
-        content
-          .scaleEffect(headerScaleFactor(size, proxy: proxy), anchor: .topLeading)
-      }
+      .visualEffect { $0.scaleEffect(headerScaleFactor(size, proxy: $1), anchor: .topLeading)}
       
       Spacer()
       
@@ -135,8 +123,7 @@ struct RecentsView: View {
         Divider()
       }
       .visualEffect { [safeArea] content, proxy in // Capturing safeArea, because its a mainActor-isolated property
-        content
-          .opacity(headerOpacity(proxy: proxy, safeArea: safeArea))
+        content.opacity(headerOpacity(proxy: proxy, safeArea: safeArea))
       }
       .padding(.horizontal, -15)
       .padding(.top, -(15 + safeArea.top))
@@ -156,12 +143,9 @@ enum CategorySelectionOptions: String, CaseIterable {
   
   var category: Category? {
     switch self {
-    case .all:
-      return nil
-    case .income:
-      return .income
-    case .expense:
-      return .expense
+    case .all: nil
+    case .income: .income
+    case .expense: .expense
     }
   }
 }
@@ -169,17 +153,13 @@ enum CategorySelectionOptions: String, CaseIterable {
 extension [Transaction] {
   func sorted(by option: TransactionSortOption) -> [Transaction] {
     switch option {
-    case .date:
-      return self.sorted(by: { $0.dateAdded > $1.dateAdded })
-    case .amount:
-      return self.sorted(by: { $0.amount > $1.amount })
+    case .date: self.sorted(by: { $0.dateAdded > $1.dateAdded })
+    case .amount: self.sorted(by: { $0.amount > $1.amount })
     }
   }
   
   func filtered(by category: Category?) -> [Transaction] {
-    guard let category = category else {
-      return self
-    }
+    guard let category = category else { return self }
     return self.filter({ $0.category == category.rawValue })
   }
 }

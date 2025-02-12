@@ -18,6 +18,7 @@ struct ChartTabView: View {
     NavigationStack {
       ScrollView {
         LazyVStack(spacing: 10) {
+          
           ChartView()
             .frame(height: 200)
             .padding(10)
@@ -26,6 +27,7 @@ struct ChartTabView: View {
           
           ForEach(chartGroups) { group in
             VStack(alignment: .leading) {
+              
               Text(formatDate(date: group.date, format: "MMM yy"))
                 .headerStyling()
               
@@ -123,6 +125,7 @@ struct ChartTabView: View {
         )
       }
       
+      // Has to be done on the main thread
       await MainActor.run {
         self.chartGroups = chartGroups
       }
@@ -130,11 +133,17 @@ struct ChartTabView: View {
   }
   
   func axisLabel(_ value: Double) -> String {
-    let intValue = Int(value)
-    let kValue = Double(intValue + 1) / 1000
-    
-    return intValue < 1000 ? "\(intValue)" : "\(String(format: "%.1f", kValue))K"
+      let intValue = Int(value)
+      
+      if intValue < 1000 {
+          return "\(intValue)"
+      }
+      
+      let kValue = Double(intValue) / 1000
+      
+      return intValue % 1000 == 0 ? "\(Int(kValue))K" : "\(String(format: "%.1f", kValue))K"
   }
+
 }
 
 struct ListOfExpenses: View {
