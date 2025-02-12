@@ -22,15 +22,13 @@ struct ContentView: View {
   @Environment(\.scenePhase) var phase
   
   @State private var isUnlocked = false
-  
-    @State var valueBefore: ScenePhase = .background
+  @State var valueBefore: ScenePhase = .background
   
   var lockType: LockType = .both
   
   var body: some View {
-    LockView(lockType: lockType, lockPin: lockPin, isEnabled: isLockEnabled, isUnlocked: $isUnlocked){
+    LockView(lockType: lockType, lockPin: lockPin, isEnabled: isLockEnabled, isUnlocked: $isUnlocked) {
       TabView {
-        
         Tab("Recents", systemImage: "calendar") {
           RecentsView()
         }
@@ -55,12 +53,18 @@ struct ContentView: View {
     .onChange(of: phase) { oldValue, newValue in
       print(oldValue, newValue)
       
-      // Locks the screen
-      if newValue != .active && lockWhenAppIsInBackground {
-        isUnlocked = false
-        valueBefore = oldValue
+      // The app is not active
+      if newValue != .active {
+        
+        // Refresh all widgets
         WidgetCenter.shared.reloadAllTimelines()
-        return
+        
+        // Lock the screen if it is enabled
+        if lockWhenAppIsInBackground {
+          isUnlocked = false
+          valueBefore = oldValue
+          return
+        }
       }
       
       guard securityManager.automaticallyScanFaceID else { return }
