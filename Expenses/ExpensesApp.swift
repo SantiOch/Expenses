@@ -22,7 +22,6 @@ struct ExpensesApp: App {
     } catch {
       fatalError("Could not create ModelContainer: \(error)")
     }
-    
   }()
   
   var body: some Scene {

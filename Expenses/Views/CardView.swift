@@ -44,7 +44,6 @@ struct CardView: View {
         .padding(.bottom, 25)
         
         HStack(spacing: 0) {
-          
           ForEach(Category.allCases, id: \.rawValue) { category in
             let symbol = category == .income ? "arrow.down" : "arrow.up"
             let tint: Color = category == .income ? .green : .red
@@ -77,6 +76,8 @@ struct CardView: View {
             }
           }
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
       }
       .contentTransition(.numericText())
       .animation(.default, value: income)

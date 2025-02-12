@@ -29,6 +29,7 @@ class SecurityManager: ObservableObject {
   }
   
   public func unlockView(lockType: LockType, onUnlock: @escaping () -> ()) {
+ 
     guard lockType != .number else { return }
     
     let context = LAContext()
@@ -45,16 +46,9 @@ class SecurityManager: ObservableObject {
             } completion: { [self] in
               pin = ""
             }
-//            isFaceIDLocked = false // Restablecer el bloqueo tras éxito
           }
         } catch {
           print("Face ID failed: \(error.localizedDescription)")
-//          isFaceIDLocked = true // Bloqueamos intentos inmediatos tras un fallo
-          
-          // Permitir un nuevo intento después de un retraso
-//          DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//            self.isFaceIDLocked = false
-//          }
         }
       }
     } else {
