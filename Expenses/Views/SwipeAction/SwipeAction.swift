@@ -23,7 +23,7 @@ struct SwipeAction<Content: View>: View {
   
   var body: some View {
     ScrollViewReader { scrollProxy in
-      ScrollView(.horizontal) {
+      ScrollView(.horizontal, showsIndicators: false) {
         LazyHStack(spacing: 0) {
           content
             .rotationEffect(.init(degrees: direction == .leading ? -180 : 0))
@@ -36,7 +36,6 @@ struct SwipeAction<Content: View>: View {
                 .opacity(scrollOffset == .zero ? 0 : 1)
             }
             .id(id)
-          //            .transition(.identity)
             .overlay {
               GeometryReader { proxy in
                 let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
@@ -53,13 +52,9 @@ struct SwipeAction<Content: View>: View {
             }
           }
           .opacity(scrollOffset == .zero ? 0 : 1)
-          
         }
         .scrollTargetLayout()
-        .visualEffect { content, proxy in
-          content
-            .offset(x: scrollOffset(proxy))
-        }
+        .visualEffect { $0.offset(x: scrollOffset($1)) }
       }
       .scrollIndicators(.hidden)
       .scrollTargetBehavior(.viewAligned)
@@ -74,7 +69,6 @@ struct SwipeAction<Content: View>: View {
       .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
     }
     .allowsTightening(isEnabled)
-    //    .transition(CustomTransition())
   }
   
   @ViewBuilder

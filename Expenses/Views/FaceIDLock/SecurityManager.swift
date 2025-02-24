@@ -17,9 +17,6 @@ class SecurityManager: ObservableObject {
   @Published var pin: String = ""
   @Published var noBiometricAccess: Bool = false
   
-  // Variable para evitar intentos infinitos tras un fallo
-//  @Published var isFaceIDLocked: Bool = false
-  
   @AppStorage("automaticallyScanFaceID") var automaticallyScanFaceID: Bool = true
   
   let context = LAContext()
@@ -73,6 +70,8 @@ class SecurityManager: ObservableObject {
         Task {
           try? await Task.sleep(for: .seconds(0.1))
           playHaptic(type: .error)
+          try? await Task.sleep(for: .seconds(0.5))
+          pin = ""
         }
         return .incorrect
       }

@@ -12,6 +12,8 @@ struct CardView: View {
   
   var income: Double
   var expense: Double
+  
+  // For the widgets
   var family: WidgetFamily = .systemMedium
   
   var body: some View {

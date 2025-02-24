@@ -13,6 +13,7 @@ struct ChartTabView: View {
   
   @Query(animation: .snappy) var transactions: [Transaction]
   @State private var chartGroups: [ChartGroup] = []
+  @State private var isLoading: Bool = true
   
   var body: some View {
     NavigationStack {
@@ -78,19 +79,30 @@ struct ChartTabView: View {
       }
     }
     .chartOverlay { _ in
-      if chartGroups.isEmpty {
-        ContentUnavailableView {
-          Label("No data available", systemImage: "exclamationmark.triangle")
-        } description: {
-          Text("Please add transactions to view a chart.")
-        }
-      }
+      if isLoading {
+        ProgressView("Loading...")
+      } else if chartGroups.isEmpty {
+         ContentUnavailableView {
+           Label("No data available", systemImage: "exclamationmark.triangle")
+         } description: {
+           Text("Please add transactions to view a chart.")
+         }
+       }
     }
     .chartForegroundStyleScale(range: [.green, .red])
+    .animation(.snappy, value: isLoading)
   }
   
   func createChartGroup() {
     Task.detached(priority: .high) {
+      
+      await MainActor.run {
+        self.isLoading = self.chartGroups.count == 0 ? true : false
+      }
+      
+      // Simulate loading time
+      try? await Task.sleep(for: .seconds(1))
+      
       let calendar = Calendar.current
       
       let groupedByDate = await Dictionary(grouping: transactions) { transaction in
@@ -106,7 +118,8 @@ struct ChartTabView: View {
         return calendar.compare(date1, to: date2, toGranularity: .day) == .orderedDescending
       }
       
-      let chartGroups = sortedGroups.compactMap{ dict -> ChartGroup? in
+      let chartGroups = sortedGroups.compactMap { dict -> ChartGroup? in
+        
         let date = calendar.date(from: dict.key) ?? .now
         let income = dict.value.filter { $0.category == Category.income.rawValue }
         let expense = dict.value.filter { $0.category == Category.expense.rawValue }
@@ -128,6 +141,7 @@ struct ChartTabView: View {
       // Has to be done on the main thread
       await MainActor.run {
         self.chartGroups = chartGroups
+        self.isLoading = false
       }
     }
   }
@@ -135,15 +149,12 @@ struct ChartTabView: View {
   func axisLabel(_ value: Double) -> String {
       let intValue = Int(value)
       
-      if intValue < 1000 {
-          return "\(intValue)"
-      }
+      if intValue < 1000 { return "\(intValue)" }
       
-      let kValue = Double(intValue) / 1000
+      let kValue = value / 1000
       
-      return intValue % 1000 == 0 ? "\(Int(kValue))K" : "\(String(format: "%.1f", kValue))K"
+      return "\(String(format: "%.1f", kValue))K"
   }
-
 }
 
 struct ListOfExpenses: View {

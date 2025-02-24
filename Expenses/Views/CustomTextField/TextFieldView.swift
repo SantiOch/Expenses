@@ -33,6 +33,7 @@ struct TextFieldView: View {
         }
       }
     }
+    .animation(.snappy, value: state)
   }
   
   @ViewBuilder

@@ -101,7 +101,7 @@ struct RecentsView: View {
             .foregroundStyle(.gray)
         }
       }
-      .visualEffect { $0.scaleEffect(headerScaleFactor(size, proxy: $1), anchor: .topLeading)}
+      .visualEffect { $0.scaleEffect(headerScaleFactor(size, proxy: $1), anchor: .topLeading) }
       
       Spacer()
       
@@ -122,6 +122,7 @@ struct RecentsView: View {
         
         Divider()
       }
+      .ignoresSafeArea()
       .visualEffect { [safeArea] content, proxy in // Capturing safeArea, because its a mainActor-isolated property
         content.opacity(headerOpacity(proxy: proxy, safeArea: safeArea))
       }

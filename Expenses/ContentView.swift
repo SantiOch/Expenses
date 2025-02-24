@@ -49,7 +49,8 @@ struct ContentView: View {
         IntroScreen()
       }
     }
-    // Doesn't work if I put it inside of the LockView, so I have to pass isUnlocked as a binding
+    // Doesn't work if I put it inside of the LockView, so I have to pass isUnlocked
+    // as a binding to LockView and update it here, so the app can lock when it is not active
     .onChange(of: phase) { oldValue, newValue in
       print(oldValue, newValue)
       

@@ -73,6 +73,7 @@ struct LockView<Content : View>: View {
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
           }
         }
+        
       } else {
         // Face ID view
         ZStack {
@@ -133,21 +134,20 @@ struct LockView<Content : View>: View {
         .font(.title)
         .bold()
         .hSpacing()
-        .overlay(alignment: .leading) {
-          if lockType == .both && securityManager.isBioMetricAvailable {
-            Button {
-              withAnimation {
-                securityManager.pin = ""
-                securityManager.noBiometricAccess = false
-              }
-            } label: {
-              Image(systemName: "arrow.left")
-            }
-            .tint(.primary)
-          }
-        }
+//        .overlay(alignment: .leading) {
+//          if lockType == .both && securityManager.isBioMetricAvailable {
+//            Button {
+//              withAnimation {
+//                securityManager.pin = ""
+//                securityManager.noBiometricAccess = false
+//              }
+//            } label: {
+//              Image(systemName: "arrow.left")
+//            }
+//            .tint(.primary)
+//          }
+//        }
         .padding(.top, 30)
-      
       
       TextFieldView(value: $securityManager.pin) { currentValue in
         securityManager.checkPinCodeState(lockPin, currentValue: currentValue) {
@@ -172,19 +172,30 @@ struct LockView<Content : View>: View {
                 .padding(.vertical, 20)
                 .contentShape(.rect)
             }
+            .buttonStyle(.scaled)
+
           }
           
-          Button {
-            if !securityManager.pin.isEmpty {
-              securityManager.pin.removeLast()
+          Group {
+            if lockType == .both && securityManager.isBioMetricAvailable {
+              Button {
+                withAnimation {
+                  securityManager.pin = ""
+                  securityManager.noBiometricAccess = false
+                }
+              } label: {
+                Image(systemName: "faceid")
+                  .font(.title)
+                  .hSpacing()
+                  .padding(.vertical, 20)
+                  .contentShape(.rect)
+              }
+              .tint(.primary)
+              .buttonStyle(.scaled)
+
+            } else {
+              Color.clear
             }
-            playHaptic()
-          } label: {
-            Image(systemName: "delete.backward")
-              .font(.title)
-              .hSpacing()
-              .padding(.vertical, 20)
-              .contentShape(.rect)
           }
           
           Button {
@@ -199,6 +210,22 @@ struct LockView<Content : View>: View {
               .padding(.vertical, 20)
               .contentShape(.rect)
           }
+          .buttonStyle(.scaled)
+          
+          Button {
+            if !securityManager.pin.isEmpty {
+              securityManager.pin.removeLast()
+            }
+            playHaptic()
+          } label: {
+            Image(systemName: "delete.backward")
+              .font(.title)
+              .hSpacing()
+              .padding(.vertical, 20)
+              .contentShape(.rect)
+          }
+          .buttonStyle(.scaled)
+          .opacity(securityManager.pin.isEmpty ? 0 : 1)
         }
         .vSpacing(.bottom)
       }
@@ -206,6 +233,7 @@ struct LockView<Content : View>: View {
     }
     .bold()
     .padding()
+    .animation(.snappy(duration: 0.3), value: securityManager.pin)
   }
   
   private func unlockView() {
