@@ -15,10 +15,10 @@ class Transaction: Identifiable {
   
   var title: String
   var remarks: String
-  var amount: Double
-  var dateAdded: Date
   var category: String
   var tintColor: String
+  var amount: Double
+  var dateAdded: Date
   
   init(title: String, remarks: String, amount: Double, dateAdded: Date, category: Category, tintColor: TintColor) {
     self.title = title
@@ -43,7 +43,7 @@ class Transaction: Identifiable {
   }
 }
 
-var exampleTransactions: [Transaction] = [
+var dummyTransactions: [Transaction] = [
   .init(
     title: "Headphones",
     remarks: "Bought a new pair of headphones.",
@@ -124,7 +124,6 @@ var exampleTransactions: [Transaction] = [
     category: .income,
     tintColor: tints.randomElement()!
   ),
-  
 ]
 
 var randomTransactionNames: [String] = [

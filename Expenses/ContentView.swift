@@ -18,13 +18,13 @@ struct ContentView: View {
   @AppStorage("isLockEnabled") var isLockEnabled: Bool = true
   @AppStorage("lockWhenAppIsInBackground") var lockWhenAppIsInBackground: Bool = true
   @AppStorage("lockPin") var lockPin: String = "1234"
+  @AppStorage("lockType") var lockType: LockType = .both
 
   @Environment(\.scenePhase) var phase
   
   @State private var isUnlocked = false
   @State var valueBefore: ScenePhase = .background
   
-  var lockType: LockType = .both
   
   var body: some View {
     LockView(lockType: lockType, lockPin: lockPin, isEnabled: isLockEnabled, isUnlocked: $isUnlocked) {
@@ -70,6 +70,7 @@ struct ContentView: View {
       
       guard securityManager.automaticallyScanFaceID else { return }
       guard isLockEnabled && !isUnlocked else { return }
+      
       // App comes from the background to active
       let wasInBackground: Bool = oldValue == .inactive && newValue == .active && valueBefore == .background
       

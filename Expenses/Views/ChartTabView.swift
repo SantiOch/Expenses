@@ -75,7 +75,6 @@ struct ChartTabView: View {
         AxisValueLabel {
           Text(axisLabel(doubleValue))
         }
-        
       }
     }
     .chartOverlay { _ in

@@ -28,9 +28,7 @@ struct TextFieldView: View {
     .onChange(of: value) {
       Task { @MainActor in
         state = await onChange(value)
-        if state == .incorrect {
-          invalidTrigger.toggle()
-        }
+        if state == .incorrect { invalidTrigger.toggle() }
       }
     }
     .animation(.snappy, value: state)

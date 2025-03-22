@@ -27,6 +27,7 @@ struct LockView<Content : View>: View {
         .frame(width: size.width, height: size.height)
         .animation(.easeInOut, value: isUnlocked)
       
+      // Animation purpose, not sure why it doesn't animate without this
       Rectangle()
         .fill(.background)
         .ignoresSafeArea()
@@ -66,11 +67,15 @@ struct LockView<Content : View>: View {
         // Face ID is not enabled
         ContentUnavailableView {
           Label("Face ID is not enabled", systemImage: "faceid")
+            .imageScale(.large)
+            .padding(.bottom, 5)
         } description: {
           Text("In order to use Face ID authentication, please enable it in your device settings")
         } actions: {
           Button("Open Settings") {
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            UIApplication.shared.open(
+              URL(string: UIApplication.openSettingsURLString)!
+            )
           }
         }
         
@@ -101,7 +106,7 @@ struct LockView<Content : View>: View {
                 .bold()
                 .foregroundColor(.white)
                 .frame(width: width, height: height)
-                .background(.indigo.gradient)
+                .background(.blue)
                 .clipShape(.rect(cornerRadius: 10))
                 .padding(.bottom, 5)
             }
@@ -134,19 +139,6 @@ struct LockView<Content : View>: View {
         .font(.title)
         .bold()
         .hSpacing()
-//        .overlay(alignment: .leading) {
-//          if lockType == .both && securityManager.isBioMetricAvailable {
-//            Button {
-//              withAnimation {
-//                securityManager.pin = ""
-//                securityManager.noBiometricAccess = false
-//              }
-//            } label: {
-//              Image(systemName: "arrow.left")
-//            }
-//            .tint(.primary)
-//          }
-//        }
         .padding(.top, 30)
       
       TextFieldView(value: $securityManager.pin) { currentValue in
@@ -173,7 +165,6 @@ struct LockView<Content : View>: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.scaled)
-
           }
           
           Group {
@@ -182,6 +173,7 @@ struct LockView<Content : View>: View {
                 withAnimation {
                   securityManager.pin = ""
                   securityManager.noBiometricAccess = false
+                  unlockView()
                 }
               } label: {
                 Image(systemName: "faceid")
@@ -247,10 +239,21 @@ struct LockView<Content : View>: View {
   }
 }
 
-enum LockType: String {
-  case biometric = "Biometric Authentication"
-  case number = "Number Authentication"
-  case both = "Biometric and Number Authentication, first preference will be biometric, and if not available, number authentication will be used"
+enum LockType: String, CaseIterable {
+  case biometric
+  case number
+  case both
+  
+  var description: String {
+    switch self {
+    case .biometric:
+      return "Biometric Authentication"
+    case .number:
+      return "Number Authentication"
+    case .both:
+      return "Biometric and Number Authentication" 
+    }
+  }
 }
 
 #Preview {

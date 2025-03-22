@@ -44,7 +44,12 @@ struct TransactionCardView: View {
               .semibold()
               .padding(.horizontal, 8)
               .padding(.vertical, 2)
-              .background(transaction.category == Category.income.rawValue ? Color.green.gradient : Color.red.gradient, in: .capsule)
+              .background(
+                transaction.category == Category.income.rawValue
+                ? Color.green.gradient
+                : Color.red.gradient,
+                in: .capsule
+              )
           }
         }
         .lineLimit(1)
@@ -56,7 +61,7 @@ struct TransactionCardView: View {
       }
       .padding(.horizontal, 15)
       .padding(.vertical, 10)
-      .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+      .background(.ultraThinMaterial, in: .rect(cornerRadius: 10))
     } actions: {
       Action(tint: .red, icon: "trash.fill") {
         modelContext.delete(transaction)
@@ -66,7 +71,7 @@ struct TransactionCardView: View {
 }
 
 #Preview {
-  TransactionCardView(transaction: exampleTransactions.randomElement()!, showCategory: true)
+  TransactionCardView(transaction: dummyTransactions.randomElement()!, showCategory: true)
 }
 
 struct CircleLetterView: View {
