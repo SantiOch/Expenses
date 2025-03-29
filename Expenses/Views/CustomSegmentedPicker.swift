@@ -41,8 +41,17 @@ struct CustomSegmentedPicker<S: Shape>: View {
             }
             .contentShape(insideShape)
             .onTapGesture {
-              withAnimation(.snappy) {
-                selectedCategory = option.category
+              Task { @MainActor in
+                
+                let swipeController = SwipeController.shared
+                
+                if swipeController.activeSwipeID != nil {
+                  swipeController.activeSwipeID = nil
+                  try? await Task.sleep(for: .seconds(0.25))
+                }
+                withAnimation(.snappy(duration: 0.5)) {
+                  selectedCategory = option.category
+                }
               }
             }
         }
@@ -52,4 +61,9 @@ struct CustomSegmentedPicker<S: Shape>: View {
     .background(.ultraThinMaterial, in: outsideShape)
     .padding(.vertical, 3)
   }
+}
+
+#Preview {
+  ContentView()
+    .modelContainer(for: Transaction.self)
 }
