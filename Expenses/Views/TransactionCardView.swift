@@ -17,7 +17,7 @@ struct TransactionCardView: View {
   
   var body: some View {
     
-    SwipeAction(cornerRadius: 10, direction: .trailing, id: transaction.title) {
+    SwipeAction(cornerRadius: 10, direction: .trailing) {
       
       let isExpense = transaction.category == Category.expense.rawValue
       
