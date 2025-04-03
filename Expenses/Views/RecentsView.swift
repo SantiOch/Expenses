@@ -33,7 +33,8 @@ struct RecentsView: View {
               Button {
                 showDateSheet.toggle()
               } label: {
-                Text("\(formatDate(date: startDate, format: "dd MMM YY")) - \(formatDate(date: endDate, format: "dd MMM YY"))")
+                Text("\(formatDate(date: startDate, format: "dd MMM YY"))" +
+                     "- \(formatDate(date: endDate, format: "dd MMM YY"))")
                   .headerStyling()
               }
               
@@ -48,8 +49,15 @@ struct RecentsView: View {
                   expense: total(transactions, category: .expense)
                 )
                 
-                CustomSegmentedPicker(selectedCategory: $selectedCategory)
-                
+                CustomSegmentedPicker(selectedCategory: $selectedCategory) {
+                  let swipeController = SwipeController.shared
+                  
+                  if swipeController.activeSwipeID != nil {
+                    swipeController.activeSwipeID = nil
+                    try? await Task.sleep(for: .seconds(0.25))
+                  }
+                }
+
                 if !filteredTransactions.isEmpty {
                   
                   CustomPickerView(selectedSortOption: $selectedSortOption)

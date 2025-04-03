@@ -13,16 +13,20 @@ struct CustomSegmentedPicker<S: Shape>: View {
   
   @Binding var selectedCategory: Category?
   
+  var onTap: () async -> ()
+  
   @Namespace private var animation
   
   init(
     outsideShape: S = .rect(cornerRadius: 12),
     insideShape: S = .rect(cornerRadius: 9),
-    selectedCategory: Binding<Category?>
+    selectedCategory: Binding<Category?>,
+    onTap: @escaping () async -> ()
   ) {
     self.outsideShape = outsideShape
     self.insideShape = insideShape
     _selectedCategory = selectedCategory
+    self.onTap = onTap
   }
   
   var body: some View {
@@ -42,13 +46,7 @@ struct CustomSegmentedPicker<S: Shape>: View {
             .contentShape(insideShape)
             .onTapGesture {
               Task { @MainActor in
-                
-                let swipeController = SwipeController.shared
-                
-                if swipeController.activeSwipeID != nil {
-                  swipeController.activeSwipeID = nil
-                  try? await Task.sleep(for: .seconds(0.25))
-                }
+                await onTap()
                 withAnimation(.snappy(duration: 0.5)) {
                   selectedCategory = option.category
                 }

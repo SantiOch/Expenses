@@ -13,12 +13,14 @@ struct DatePickerSheet: View {
   @Binding var originalStartDate: Date
   @Binding var originalEndDate: Date
   
-  @State private var startDate: Date = Date()
-  @State private var endDate: Date = Date()
+  @State private var startDate: Date
+  @State private var endDate: Date
   
   init(startDate: Binding<Date>, endDate: Binding<Date>) {
     _originalStartDate = startDate
     _originalEndDate = endDate
+    self.startDate = startDate.wrappedValue
+    self.endDate = endDate.wrappedValue
   }
   
   var body: some View {
@@ -53,4 +55,9 @@ struct DatePickerSheet: View {
       }
     }
   }
+}
+
+#Preview {
+  ContentView()
+    .modelContainer(for: Transaction.self, inMemory: true)
 }

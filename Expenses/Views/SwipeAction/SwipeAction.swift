@@ -12,13 +12,14 @@ struct SwipeAction<Content: View>: View {
   
   var cornerRadius: CGFloat = 0
   var direction: SwipeDirection = .trailing
+  var isSwipeEnabled: Bool = true
   let id = UUID().uuidString
-  @State var isComingBack: Bool = false
   
   @ViewBuilder var content: Content
   @ActionBuilder var actions: [Action]
   
   @State private var isEnabled: Bool = false
+  @State private var isComingBack: Bool = false
   @State private var scrollOffset: CGFloat = .zero
   
   @Environment(\.colorScheme) var scheme
@@ -48,6 +49,8 @@ struct SwipeAction<Content: View>: View {
                     scrollOffset = newOffset
                     if newOffset != 0 && !isComingBack {
                       swipeController.activeSwipeID = id
+                    } else if newOffset == 0 && !isComingBack {
+                      swipeController.activeSwipeID = nil
                     }
                   }
               }
@@ -87,7 +90,6 @@ struct SwipeAction<Content: View>: View {
       }
     }
     .allowsTightening(isEnabled)
-    
   }
   
   @ViewBuilder
@@ -125,7 +127,7 @@ struct SwipeAction<Content: View>: View {
   
   nonisolated func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
     let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
-    return (minX > 0 ? -minX : 0)
+    return isSwipeEnabled ? (minX > 0 ? -minX : 0) : -minX
   }
 }
 

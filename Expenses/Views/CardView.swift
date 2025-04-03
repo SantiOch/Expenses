@@ -145,8 +145,11 @@ struct CardView: View {
           }
         }
       }
+      .contentTransition(.numericText())
+      .animation(.default, value: income)
+      .animation(.default, value: expense)
       .vSpacing(.bottom)
-      .padding(family == .systemSmall ? 15 : 0)
+      .padding(15)
     }
   }
 }

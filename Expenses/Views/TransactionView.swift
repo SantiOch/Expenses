@@ -37,7 +37,8 @@ struct TransactionView: View {
             dateAdded: dateAdded,
             category: category,
             tintColor: tint
-          )
+          ),
+          isSwipeEnabled: false
         )
         
         CustomTextField("Title", placeholder: "Camera", value: $title)
@@ -110,13 +111,13 @@ struct TransactionView: View {
   
   func save() {
     
-    if editTransaction != nil {
+    if let editTransaction {
    
-      editTransaction?.title = title
-      editTransaction?.remarks = remarks
-      editTransaction?.amount = amount
-      editTransaction?.category = category.rawValue
-      editTransaction?.dateAdded = dateAdded
+      editTransaction.title = title
+      editTransaction.remarks = remarks
+      editTransaction.amount = amount
+      editTransaction.category = category.rawValue
+      editTransaction.dateAdded = dateAdded
       
     } else {
    
@@ -130,9 +131,10 @@ struct TransactionView: View {
       )
       
       modelContext.insert(transaction)
+      
     }
-    WidgetCenter.shared.reloadAllTimelines()
 
+    WidgetCenter.shared.reloadAllTimelines()
     dismiss()
   }
   

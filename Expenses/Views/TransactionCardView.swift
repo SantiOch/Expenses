@@ -14,10 +14,11 @@ struct TransactionCardView: View {
   
   var transaction: Transaction
   var showCategory: Bool = false
+  var isSwipeEnabled: Bool = true
   
   var body: some View {
     
-    SwipeAction(cornerRadius: 10, direction: .trailing) {
+    SwipeAction(cornerRadius: 10, isSwipeEnabled: isSwipeEnabled) {
       
       let isExpense = transaction.category == Category.expense.rawValue
       
